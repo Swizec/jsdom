@@ -141,7 +141,7 @@ exports.tests = {
     var scriptHtml = '<script>alert("hello world")</script>';
     head.innerHTML = scriptHtml;
 
-    assertSame("original and processed", head.innerHTML, scriptHtml);
+    assertEquals("original and processed", head.innerHTML, scriptHtml);
 
   },
   parse_styletags : function() {
@@ -151,7 +151,7 @@ exports.tests = {
     var styleHtml = '<style>body: {color: #fff;}</style>';
     head.innerHTML = styleHtml;
 
-    assertSame("original and processed", head.innerHTML, styleHtml);
+    assertEquals("original and processed", head.innerHTML, styleHtml);
 
   },
   parse_doublespacetags : function() {
@@ -174,7 +174,7 @@ exports.tests = {
 	doc.documentElement.style.color = 'black';
 	doc.documentElement.style.backgroundColor = 'white';
 	assertEquals('',
-               '<html style="color: black; background-color: white">\r\n</html>\r\n',
+               '<html style="color: black; background-color: white"></html>\r\n',
                require('../../lib/jsdom/browser/domtohtml').domToHtml(doc));
   }
 };

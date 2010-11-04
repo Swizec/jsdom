@@ -1,4 +1,5 @@
-var sys = require("sys");
+var sys = require("sys"),
+  fs = require("fs");
 
 var mixin = function(target) {
   var i = 1, length = arguments.length, source;
@@ -95,19 +96,37 @@ var suites = {
   },
   "level2/events" : { cases: require("./level2/events").tests, setUp : function() {
       mixin(global, require("../lib/jsdom/level2/events").dom.level2.events);
+      global.events = require("../lib/jsdom/level2/events").dom.level2.events;
       global.builder.contentType   = "text/xml";
       global.builder.type          = "xml";
       global.builder.testDirectory = "level2/events";
+    }, tearDown : function() {
+      delete global.events;
     }
   },
-  /*
-    Ignoring for now..
   "level2/html" : { cases: require("./level2/html").tests, setUp : function() {
       global.builder.contentType   = "text/html";
       global.builder.type          = "html";
       global.builder.testDirectory = "level2/html";
+      global.load = function(docRef, doc, name) {
+        var file     = __dirname + "/" + global.builder.testDirectory +
+                       "/files/" + name + "." + global.builder.type,
+            contents = fs.readFileSync(file, 'utf8'),
+
+            doc      = require("../lib/jsdom").jsdom(contents, null, {
+              url : "file://" + file // fake out the tests
+            });
+
+        return doc;
+      };
+
+      var core = require("../lib/jsdom/level2/html").dom.level2.html;
+      global.getImplementation = function() {
+        var doc = new (core.HTMLDocument)();
+        return doc.implementation;
+      };
     }
-  },*/
+  },
  "level3/core" : { cases: require("./level3/core").tests, setUp : function() {
       global.builder.contentType   = "text/xml";
       global.builder.type          = "xml";
@@ -147,9 +166,9 @@ var suites = {
   }
 */
   "browser"     : { cases: require("./browser/index").tests, setUp : function() {
-      global.dom = require("../lib/jsdom/level1/core").dom.level1.core;
+      global.dom = require("../lib/jsdom/level2/core").dom.level2.core;
+      global.html = require("../lib/jsdom/level2/html").dom.level2.html;
       global.browser = require("../lib/jsdom/browser/index").browserAugmentation(dom);
-
       global.builder.contentType   = "text/html";
       global.builder.type          = "html";
       global.builder.testDirectory = "browser";
