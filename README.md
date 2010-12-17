@@ -4,7 +4,8 @@ CommonJS implementation of the DOM intended to be platform independent and as mi
 
 Currently Implemented and w3c Compliant:
 
-  - DOM Level 1 (html/svg/xml) 
+  - DOM Level 1 (html/svg/xml)
+  - DOM Level 2 (html/events)
   - Browser (BOM) Augmentation (getElementsByClassName, getElementById, etc..)
 
 
@@ -40,8 +41,9 @@ see: [project site][] for additional information
 
 ## Creating a browser-like BOM/DOM/Window
 
-    var jsdom  = require("./lib/jsdom").jsdom,
-        window = jsdom("<html><head></head><body>hello world</body></html>").createWindow();
+    var jsdom = require("./lib/jsdom").jsdom,
+		document = jsdom("<html><head></head><body>hello world</body></html>"),
+        window = document.createWindow();
 
     console.log(window.document.innerHTML);
     // output: '<html><head></head><body>hello world</body></html>'
@@ -53,25 +55,23 @@ see: [project site][] for additional information
     // outputs: function
 
 ## Load arbitrary scripts
-    var jsdom  = require("jsdom").jsdom,
-        window = jsdom().createWindow(),
-        script = window.document.createElement("script");
+    var document = require("jsdom").jsdom(),
+        window = document.createWindow(),
+        script = document.createElement("script");
 
     script.src = 'http://code.jquery.com/jquery-1.4.2.js';
-
     script.onload = function() {
-      if (this.readyState === 'complete') {
-        console.log(window.jQuery.fn.jquery);
-        // outputs: 1.4.2
-      }
+      console.log(window.jQuery.fn.jquery);
+      // outputs: 1.4.2
     };
+	document.head.appendChild(script);
 
 ## jQueryify
 
     var jsdom  = require("jsdom"),
         window = jsdom.jsdom().createWindow();
 
-    jsdom.jQueryify(window, "http://code.jquery.com/jquery-1.4.2.min.js" , function() {
-      window.jQuery('body').append(<div class='testing'>Hello World, It works</div>");
-      console.log(window.jQuery(".testing").text());
+    jsdom.jQueryify(window, 'http://code.jquery.com/jquery-1.4.2.min.js' , function() {
+      window.$('body').append('<div class="testing">Hello World, It works</div>');
+      console.log(window.$('.testing').text());
     });
